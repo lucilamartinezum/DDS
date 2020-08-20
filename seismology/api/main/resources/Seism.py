@@ -1,3 +1,4 @@
+from main.map.Map import SeismSchema
 from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
@@ -8,13 +9,15 @@ from random import uniform, random, randint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
 
+seism_schema = SeismSchema()
+
 class Unverifiedseism(Resource):
     #@jwt_required
     # obtener recurso
     def get(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
         if not seism.verified:
-            return seism.to_json()
+            return seism_schema.jsonify(seism)
         else:
             return 'Denied Access', 403
     @admin_required
@@ -146,6 +149,7 @@ class Verifiedseisms(Resource):
 
         seisms = seisms.paginate(page, per_page, True, max_per_page)  #True para no mostrar error
         return jsonify({'Verified-Seism': [seism.to_json() for seism in seisms.items]})
+
 
     """
     @jwt_required

@@ -28,12 +28,13 @@ class Sensor(Resource):
     #modificar recurso
     def put(self, id):
         sensor = db.session.query(SensorModel).get_or_404(id)
-        for key, value in request.get_json().items():
+        data = sensor_schema.load(request.get_json())
+        for key, value in data:
             setattr(sensor, key, value)
         db.session.add(sensor)
         try:
             db.session.commit()
-            return sensor.to_json(), 201
+            return sensor_schema.jsonify(sensor), 201
         except Exception as error:
             return str(error), 400
 
@@ -97,7 +98,8 @@ class Sensors(Resource):
     @admin_required
     #insertar recurso
     def post(self):
-        sensor = SensorModel.from_json(request.get_json())
+        data = sensor_schema.load(request.get_json())
+        sensor = SensorModel(name=data['name'], ip =data["ip"], port=data["port"], status=data["status"], active=data["active"], userId=data["userID")
         try:
             db.session.add(sensor)
             db.session.commit()

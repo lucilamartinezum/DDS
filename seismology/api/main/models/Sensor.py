@@ -13,29 +13,7 @@ class Sensor(db.Model):
     seisms = db.relationship("Seism", back_populates="sensor", passive_deletes = 'all')
     def __repr__(self):
         return "<Sensor: %r %r %r %r %r %r>" % (self.id, self.name, self.ip, self.port, self.status, self.active)
-    def to_json(self):
-        self.user = db.session.query(User).get(self.userId)
-        try:
-            sensor_json = {
-                'id': self.id,
-                'name': str(self.name),
-                'ip': str(self.ip),
-                'port': self.port,
-                'status': self.status,
-                'active': self.active,
-                'user': self.user.to_json(),
-            }
-        except AttributeError:
-            sensor_json = {
-                'id': self.id,
-                'name': str(self.name),
-                'ip': str(self.ip),
-                'port': self.port,
-                'status': self.status,
-                'active': self.active,
-                'user': None,
-            }
-        return sensor_json
+
     def from_json(sensor_json):
         id = sensor_json.get('id')
         name = sensor_json.get('name')

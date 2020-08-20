@@ -1,2 +1,3 @@
-from .Map import SensorSchema
+from .Map import SensorSchema, UserSchema, SeismSchema
+
 

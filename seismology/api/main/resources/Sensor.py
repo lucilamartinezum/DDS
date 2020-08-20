@@ -5,13 +5,14 @@ from main.models import SensorModel
 from main.models import UserModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
+from main.map.Map import SensorSchema
 
 class Sensor(Resource):
     @jwt_required
     #obtener recurso
     def get(self, id):
         sensor = db.session.query(SensorModel).get_or_404(id)
-        return sensor.to_json()
+        return sensor_schema.jsonify(sensor)
     @admin_required
     #eliminar recurso
     def delete(self, id):
@@ -103,3 +104,5 @@ class Sensors(Resource):
         except Exception as error:
             return str(error), 400
         return sensor.to_json(), 201
+
+sensor_schema = SensorSchema()

@@ -5,6 +5,9 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
+from flask_marshmallow import Marshmallow
+
+ma = Marshmallow()
 
 api = Api()
 db = SQLAlchemy()
@@ -20,8 +23,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////'+os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME')
 
-    db.init_app(app)
 
+    db.init_app(app)
+    ma.init_app(app)
     app.config['JWT_SECRET_KEY'] = 'programacion12020'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
     jwt.init_app(app)
@@ -45,7 +49,7 @@ def create_app():
     api.add_resource(resources.UnverifiedseismResource, '/unverified-seism/<id>')
 
     api.add_resource(resources.UsersResource, '/users')
-    api.add_resource(resources.UserResource, '/user/<id>')
+    api.add_resource(resources.UserResource, '/user/<id>', endpoint='user_id')
     api.init_app(app)
 
     from main.auth import routes

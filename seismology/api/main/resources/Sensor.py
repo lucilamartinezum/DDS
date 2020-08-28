@@ -6,6 +6,7 @@ from main.models import UserModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
 from main.map.Map import SensorSchema
+from main.resources.Pagination import SensorPagination
 
 class Sensor(Resource):
     @jwt_required
@@ -40,7 +41,7 @@ class Sensor(Resource):
 
 
 class Sensors(Resource):
-    @jwt_required
+    #@jwt_required
     #obtener lista de recursos
     def get(self):
         page = 1
@@ -49,9 +50,11 @@ class Sensors(Resource):
         #filtrar sensores
         filters = request.get_json().items()
         sensors = db.session.query(SensorModel)
+        sensor_pagination = SensorPagination(sensors)
         try:
             for key, value in filters:
-                if key == 'userId':
+                sensors = sensor_pagination.apply_filter(key, value)
+                """if key == 'userId':
                     sensors = sensors.filter(SensorModel.userId == value)
                 if key == 'active':
                     sensors = sensors.filter(SensorModel.active == value)
@@ -59,7 +62,7 @@ class Sensors(Resource):
                     sensors = sensors.filter(SensorModel.status == value)
                 #Filtro user email
                 if key == 'user.email':
-                    sensors = sensors.join(SensorModel.user).filter(UserModel.email.like('%'+value+'%'))
+                    sensors = sensors.join(SensorModel.user).filter(UserModel.email.like('%'+value+'%'))"""
                 # ORDENAMIENTO
 
                 if key == "sort_by":
@@ -99,7 +102,7 @@ class Sensors(Resource):
     #insertar recurso
     def post(self):
         data = sensor_schema.load(request.get_json())
-        sensor = SensorModel(name=data['name'], ip =data["ip"], port=data["port"], status=data["status"], active=data["active"], userId=data["userID")
+        sensor = SensorModel(name=data['name'], ip =data["ip"], port=data["port"], status=data["status"], active=data["active"], userId=data["userId"])
         try:
             db.session.add(sensor)
             db.session.commit()

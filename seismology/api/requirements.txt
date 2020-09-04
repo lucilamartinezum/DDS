@@ -9,5 +9,8 @@ flask_marshmallow
 marshmallow-sqlalchemy
 flask-filter
 sqlalchemy-filters
+Flask-APScheduler
+requests
+
 
 

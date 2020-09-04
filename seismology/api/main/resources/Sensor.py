@@ -6,7 +6,10 @@ from main.models import UserModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
 from main.map.Map import SensorSchema
-from main.resources.Pagination import SensorPagination
+from main.resources.Pagination import Pagination
+
+sensor_schema = SensorSchema()
+sensor_schema = SensorSchema(many = True)
 
 class Sensor(Resource):
     @jwt_required
@@ -44,60 +47,15 @@ class Sensors(Resource):
     #@jwt_required
     #obtener lista de recursos
     def get(self):
-        page = 1
-        per_page = 25
-        max_per_page = 50
-        #filtrar sensores
-        filters = request.get_json().items()
-        sensors = db.session.query(SensorModel)
-        sensor_pagination = SensorPagination(sensors)
-        try:
-            for key, value in filters:
-                sensors = sensor_pagination.apply_filter(key, value)
-                """if key == 'userId':
-                    sensors = sensors.filter(SensorModel.userId == value)
-                if key == 'active':
-                    sensors = sensors.filter(SensorModel.active == value)
-                if key == 'status':
-                    sensors = sensors.filter(SensorModel.status == value)
-                #Filtro user email
-                if key == 'user.email':
-                    sensors = sensors.join(SensorModel.user).filter(UserModel.email.like('%'+value+'%'))"""
-                # ORDENAMIENTO
-
-                if key == "sort_by":
-                    if value == "name.desc":
-                        sensors = sensors.order_by(SensorModel.name.desc())
-                    if value == "name.asc":
-                        sensors = sensors.order_by(SensorModel.name.asc())
-                    if value == "userId.desc":
-                        sensors = sensors.order_by(SensorModel.userId.desc())
-                    if value == "userId.asc":
-                        sensors = sensors.order_by(SensorModel.userId.asc())
-                    if value == "active.desc":
-                        sensors = sensors.order_by(SensorModel.active.desc())
-                    if value == "active.asc":
-                        sensors = sensors.order_by(SensorModel.active.asc())
-                    if value == "status.desc":
-                        sensors = sensors.order_by(SensorModel.status.desc())
-                    if value == "status.asc":
-                        sensors = sensors.order_by(SensorModel.status.asc())
-                #ORDENAMIENTO POR EMAIL
-                    if value == "user.email.desc":
-                        sensors = sensors.join(SensorModel.user).order_by(UserModel.email.desc())
-                    if value == "user.email.asc":
-                        sensors = sensors.join(SensorModel.user).order_by(UserModel.email.asc())
-
-                #PAGINACION
-                if key == "page":
-                    page = value
-                if key == "per_page":
-                    per_page = value
-        except:
-            pass
-
-        sensors = sensors.paginate(page, per_page, True, max_per_page)
-        return jsonify({'Sensors': [sensor.to_json() for sensor in sensors.items]})
+        query = db.session.query(SensorModel)
+        page_number = 1
+        elem_per_page = 25
+        #max_per_page = 50
+        pag = Pagination(query, page_number, elem_per_page)
+        for key, value in request.get_json().items:
+            query = pag.apply(key, value)
+        query, pagination = pag.pagination()
+        return sensor_schema.dump(query.all())
     @admin_required
     #insertar recurso
     def post(self):
@@ -110,4 +68,3 @@ class Sensors(Resource):
             return str(error), 400
         return sensor.to_json(), 201
 
-sensor_schema = SensorSchema()

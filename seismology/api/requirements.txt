@@ -11,6 +11,7 @@ flask-filter
 sqlalchemy-filters
 Flask-APScheduler
 requests
-
+werkzeug
+marshmallow
 
 

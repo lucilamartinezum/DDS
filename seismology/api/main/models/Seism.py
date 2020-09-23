@@ -2,15 +2,16 @@ from .. import db
 from . import SensorModel
 from datetime import datetime as dt
 
+
 class Seism(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    datetime = db.Column(db.DateTime, nullable = False)
-    depth = db.Column(db.Integer, nullable = False)
-    magnitude = db.Column(db.Float, nullable = False)
-    latitude = db.Column(db.String(100), nullable = False)
-    longitude = db.Column(db.String(100), nullable = False)
+    id = db.Column(db.Integer, primary_key=True)
+    datetime = db.Column(db.DateTime, nullable=False)
+    depth = db.Column(db.Integer, nullable=False)
+    magnitude = db.Column(db.Float, nullable=False)
+    latitude = db.Column(db.String(100), nullable=False)
+    longitude = db.Column(db.String(100), nullable=False)
     verified = db.Column(db.Boolean, nullable = False)
-    sensorId = db.Column(db.Integer, db.ForeignKey('sensor.id', ondelete = 'RESTRICT'), nullable = False)
+    sensorId = db.Column(db.Integer, db.ForeignKey('sensor.id', ondelete='RESTRICT'), nullable=False)
     sensor = db.relationship("Sensor", back_populates="seisms", uselist=False, single_parent=True)
 
     def __repr__(self):
@@ -29,6 +30,7 @@ class Seism(db.Model):
             'sensor': self.sensor.to_json(),
         }
         return seism_json
+
     @staticmethod
     def from_json(seism_json):
         id = seism_json.get('id')
@@ -39,4 +41,4 @@ class Seism(db.Model):
         longitude = seism_json.get('longitude')
         verified = seism_json.get('verified')
         sensorId = seism_json.get('sensorId')
-        return Seism(id = id, datetime = datetime, depth = depth, magnitude = magnitude, latitude = latitude, longitude = longitude,verified = verified, sensorId = sensorId)
+        return Seism(id=id, datetime=datetime, depth=depth, magnitude=magnitude, latitude=latitude, longitude=longitude, verified=verified, sensorId=sensorId)

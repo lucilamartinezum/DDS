@@ -1,20 +1,23 @@
 from .. import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    email = db.Column(db.String(100), unique = True, index = True, nullable = False)
-    password = db.Column(db.String(100), nullable = False)
-    admin = db.Column(db.Boolean, nullable = False)
-    #relation with sensors
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True, index=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    admin = db.Column(db.Boolean, nullable=False)
+    # relation with sensors
     sensors = db.relationship("Sensor", back_populates="user")
 
     @property
     def plain_password(self):
         raise AttributeError('Password cant be read')
+
     @plain_password.setter
     def plain_password(self, password):
         self.password = generate_password_hash(password)
+
     def validate_pass(self, password):
         return check_password_hash(self.password, password)
 
@@ -28,6 +31,7 @@ class User(db.Model):
             'admin': self.admin,
         }
         return user_json
+
     def to_json_public(self):
         user_json = {
             'email': str(self.email),
@@ -39,4 +43,4 @@ class User(db.Model):
         email = user_json.get('email')
         password = user_json.get('password')
         admin = user_json.get('admin')
-        return User(id = id, email = email, plain_password = password, admin = admin)
+        return User(id=id, email=email, plain_password=password, admin=admin)

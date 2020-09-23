@@ -1,8 +1,9 @@
 from .. import db
 from main.models.User import User
 
+
 class Sensor(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable = False)
     ip = db.Column(db.String(100), nullable = False)
     port = db.Column(db.Integer, nullable = False)
@@ -11,6 +12,7 @@ class Sensor(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = True)
     user = db.relationship("User", back_populates="sensors", uselist = False, single_parent = True)
     seisms = db.relationship("Seism", back_populates="sensor", passive_deletes = 'all')
+
     def __repr__(self):
         return "<Sensor: %r %r %r %r %r %r>" % (self.id, self.name, self.ip, self.port, self.status, self.active)
 

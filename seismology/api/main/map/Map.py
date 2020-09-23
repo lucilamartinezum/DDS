@@ -8,11 +8,13 @@ class UserSchema(ma.Schema):
     admin = fields.Boolean(required=True, falsy={0, 'false', 'False', 'FALSE'}, truthy={'true', 1, 'TRUE', 'True'})
     password = fields.String(required=True)
 
+
 class SensorSchema(ma.Schema):
     class Meta:
         fields = ("id_num", "name", "ip", "port", "status", "active", "user_id", "user")
     # _links = ma.Hyperlinks({"self": ma.URLFor("user_id", id="<userId>"), "collection": ma.URLFor("users")})
     user = fields.Nested(UserSchema(exclude={"password"}), dump_only=True)
+
 
 class SeismSchema(ma.Schema):
     datetime = fields.DateTime("%Y-%m-%dT%H:%M:%S", required=True)

@@ -14,6 +14,7 @@ db = SQLAlchemy()
 jwt = JWTManager()
 mailsender = Mail()
 
+
 def create_app():
     app = Flask(__name__)
     load_dotenv()
@@ -22,7 +23,6 @@ def create_app():
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////'+os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME')
-
 
     db.init_app(app)
     ma.init_app(app)

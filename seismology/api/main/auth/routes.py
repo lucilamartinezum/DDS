@@ -6,7 +6,8 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 from main.mail.functions import sendMail
 from main.auth.decorators import admin_required
 
-auth = Blueprint('auth', __name__, url_prefix= '/auth')
+auth = Blueprint('auth', __name__, url_prefix='/auth')
+
 
 @auth.route('/login', methods = ['POST'])
 def login():
@@ -14,9 +15,11 @@ def login():
     if user.validate_pass(request.get_json().get('password')):
         access_token = create_access_token(identity = user)
         data = '{"id":"'+str(user.id)+'", "email":"'+str(user.email)+'", "access_token":"'+access_token+'"}'
-        return  data, 200
+        return data, 200
     else:
         return 'Incorrect password', 204
+
+
 @auth.route('/register', methods = ['POST'])
 def register():
     user = UserModel.from_json(request.get_json())

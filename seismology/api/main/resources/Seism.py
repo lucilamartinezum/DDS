@@ -5,12 +5,11 @@ from .. import db
 from main.models import SeismModel
 from main.models import SensorModel
 import time
-from random import uniform, random, randint
+from random import uniform, randint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
 from main.resources.Pagination import Pagination
 
-seism_schema = SeismSchema()
 seism_schema = SeismSchema(many=True)
 
 
@@ -21,7 +20,7 @@ class UnverifiedSeism(Resource):
     def get(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
         if not seism.verified:
-            return seism_schema.jsonify(seism)
+            return seism_schema.dump(seism)
         else:
             return 'Denied Access', 403
 
@@ -45,7 +44,7 @@ class UnverifiedSeism(Resource):
                 setattr(seism, key, value)
             db.session.add(seism)
             db.session.commit()
-            return seism.to_json(), 201
+            return seism_schema.jsonify(seism), 201
         else:
             return 'Denied Access', 403
 
@@ -62,7 +61,7 @@ class UnverifiedSeisms(Resource):
         for key, value in filters:
             query = pag.apply(key, value)
         query, pagination = pag.pagination()
-        return seism_schema.dump(query.all())
+        return seism_schema.jsonify(query.all())
 
     @admin_required
     def post(self):
@@ -83,7 +82,7 @@ class UnverifiedSeisms(Resource):
         seism = SeismModel.from_json(value_sensor)
         db.session.add(seism)
         db.session.commit()
-        return seism.to_json(), 201
+        return seism_schema.jsonify(seism), 201
 
 
 class VerifiedSeism(Resource):

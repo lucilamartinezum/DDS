@@ -9,7 +9,6 @@ from main.resources.Pagination import Pagination
 from main.map import SensorSchema
 
 
-sensor_schema = SensorSchema()
 sensor_schema = SensorSchema(many=True)
 
 

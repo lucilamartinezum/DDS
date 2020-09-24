@@ -11,8 +11,8 @@ class UserSchema(ma.Schema):
 
 class SensorSchema(ma.Schema):
     class Meta:
-        fields = ("id_num", "name", "ip", "port", "status", "active", "user_id", "user")
-    # _links = ma.Hyperlinks({"self": ma.URLFor("user_id", id="<userId>"), "collection": ma.URLFor("users")})
+        fields = ("id", "name", "ip", "port", "status", "active", "user_id", "user")
+
     user = fields.Nested(UserSchema(exclude={"password"}), dump_only=True)
 
 
@@ -26,7 +26,3 @@ class SeismSchema(ma.Schema):
     verified = fields.Bool(required=True)
     sensorId = fields.Int(required=True)
     sensor = fields.Nested(SensorSchema(), dump_only=True)
-
-
-
-

@@ -1,5 +1,5 @@
-from main.models import SensorModel
-from main.models import UserModel
+from sqlalchemy_filters import apply_filters, apply_sort, apply_pagination
+
 
 class Pagination:
     def __init__(self, query, page_num, elem_per_page):
@@ -25,15 +25,8 @@ class Pagination:
             self.__elem_per_page = value
         return self.__query
 
-    """def __max_per_page(self, *value):
-        if int(value >=1):
-            self.__max_per_page() = value
-        return self.__query"""
-
     def pagination(self):
         return apply_pagination(self.__query, page_number=self.__page_num, page_size=self.__elem_per_page)
-
-
 
     def apply(self, key, value):
         pag_dict = {

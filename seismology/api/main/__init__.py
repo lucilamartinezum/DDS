@@ -19,13 +19,14 @@ def create_app():
     app = Flask(__name__)
     load_dotenv()
     if not os.path.exists(os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME')):
-        os.mknod(os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME'))
+        os.mknod(os.getenv('SQLALCHEMY_DATABASE_PATH') + os.getenv('SQLALCHEMY_DATABASE_NAME'))
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////'+os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME')
 
     db.init_app(app)
     ma.init_app(app)
+
     app.config['JWT_SECRET_KEY'] = 'programacion12020'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
     jwt.init_app(app)

@@ -23,24 +23,3 @@ class User(db.Model):
 
     def __repr__(self):
         return "<Users: %r %r %r>" % (self.id, self.email, self.admin)
-
-    def to_json(self):
-        user_json = {
-            'id': self.id,
-            'email': str(self.email),
-            'admin': self.admin,
-        }
-        return user_json
-
-    def to_json_public(self):
-        user_json = {
-            'email': str(self.email),
-        }
-        return user_json
-
-    def from_json(user_json):
-        id = user_json.get('id')
-        email = user_json.get('email')
-        password = user_json.get('password')
-        admin = user_json.get('admin')
-        return User(id=id, email=email, plain_password=password, admin=admin)

@@ -8,14 +8,16 @@ from main.map import UserSchema
 from main.resources.Pagination import Pagination
 
 user_schema = UserSchema()
-user_schema = UserSchema(many = True)
+user_schema = UserSchema(many=True)
+
 
 class User(Resource):
 
     @jwt_required
     def get(self, id):
         user = db.session.query(UserModel).get_or_404(id)
-        return user.to_json()
+        return user_schema.jsonify(user)
+
 
     @jwt_required
     def put(self, id):
@@ -24,7 +26,7 @@ class User(Resource):
             setattr(user, key, value)
         db.session.add(user)
         db.session.commit()
-        return user.to_json(), 201
+        return user_schema.jsonify(user), 201
 
     @jwt_required
     def delete(self, id):
@@ -37,20 +39,15 @@ class User(Resource):
             return '', 409
         return "User was deleted succesfully", 204
 
+
 class Users(Resource):
 
-    @jwt_required
+    # @admin_required
     def get(self):
-        query = db.session.query(UserModel)
-        page_number = 1
-        elem_per_page = 3
-        pag = Pagination(query, page_number, elem_per_page)
-        for key, value in request.get_json().items:
-            query = pag.apply(key, value)
-        query, pagination = pag.pagination()
-        return user_schema.dump(query.all())
+        users = db.session.query(UserModel).all()
+        return user_schema.dump(users)
 
-    #@admin_required
+    # @admin_required
     def post(self):
         try:
             user = user_schema.load(request.get_json(), session=db.session)

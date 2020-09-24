@@ -1,1 +1,1 @@
-Repositorio de Programacion I Universidad de Mendoza
+Repositorio de Diseño de Sistemas de la Universidad de Mendoza

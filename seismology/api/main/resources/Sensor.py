@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
 from main.resources.Pagination import Pagination
 
-from main.map.Map import SensorSchema
+from main.map import SensorSchema
 
 
 sensor_schema = SensorSchema()

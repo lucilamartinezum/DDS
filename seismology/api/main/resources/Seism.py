@@ -1,4 +1,4 @@
-from main.map.Map import SeismSchema
+from main.map.Seism import SeismSchema
 from flask_restful import Resource
 from flask import request, jsonify
 from .. import db

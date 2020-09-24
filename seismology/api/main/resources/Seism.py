@@ -23,7 +23,7 @@ class UnverifiedSeism(Resource):
         if not seism.verified:
             return seism_schema.dump(seism)
         else:
-            return 'Denied Access', 403
+            return 'Denied Access: not an unverified seism', 403
 
     # @admin_required
     # eliminar recurso
@@ -94,7 +94,7 @@ class VerifiedSeism(Resource):
         if seism.verified:
             return seism_schema.jsonify(seism)
         else:
-            return 'Denied Access', 403
+            return 'Denied Access: not a verified seism', 403
 
 
 class VerifiedSeisms(Resource):

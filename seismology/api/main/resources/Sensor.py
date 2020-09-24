@@ -5,7 +5,7 @@ from main.models import SensorModel
 from main.models import UserModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
-from main.map.Map import SensorSchema
+from main.map.Sensor import SensorSchema
 from main.resources.Pagination import Pagination
 
 sensor_schema = SensorSchema()

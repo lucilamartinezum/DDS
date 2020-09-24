@@ -6,23 +6,31 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_marshmallow import Marshmallow
+from flask_apscheduler import APScheduler
 
 ma = Marshmallow()
 
 api = Api()
+scheduler = APScheduler()
 db = SQLAlchemy()
 jwt = JWTManager()
 mailsender = Mail()
 
+class Config(object):
+    SCHEDULER_JOBSTORES = {'default':SQLAlchemyJobStore(url='sqlite:///'+str(os.getenv('SQLALCHEMY_DATABASE_PATH'))+str(os.getenv('SQLALCHEMY_DATABASE_NAME')))}
+    SCHEDULER_API_ENABLED = True
+
 
 def create_app():
     app = Flask(__name__)
+    app.config.from_object(Config())
     load_dotenv()
     if not os.path.exists(os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME')):
         os.mknod(os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME'))
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////'+os.getenv('SQLALCHEMY_DATABASE_PATH')+os.getenv('SQLALCHEMY_DATABASE_NAME')
+
 
     db.init_app(app)
     ma.init_app(app)
@@ -51,6 +59,13 @@ def create_app():
     api.add_resource(resources.UsersResource, '/users')
     api.add_resource(resources.UserResource, '/user/<id>', endpoint='user_id')
     api.init_app(app)
+
+    scheduler.init_app(app)
+    scheduler.start()
+
+    @app.before_first_request
+    def load_tasks():
+        from main.services import tasks
 
     from main.auth import routes
     import main.resources as resources

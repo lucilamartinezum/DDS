@@ -4,7 +4,7 @@ from .. import db
 from marshmallow import validate
 from main.models import UserModel
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity, jwt_optional
-from main.map import UserSchema
+from main.map.User import UserSchema
 from main.resources.Pagination import Pagination
 
 user_schema = UserSchema()

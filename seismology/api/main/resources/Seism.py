@@ -4,7 +4,7 @@ from flask import request, jsonify
 from .. import db
 from main.models import SeismModel
 from main.models import SensorModel
-import time
+import datetime
 from random import uniform, randint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
@@ -66,24 +66,25 @@ class UnverifiedSeisms(Resource):
 
     # @admin_required
     def post(self):
-        sensors = db.session.query(SensorModel).all()
-        sensorsId = []
-        for sensor in sensors:
-            sensorsId.append(sensor.id)
-
-        value_sensor = {
-            'datetime': time.strftime(r"%Y-%m-%d %H:%M:%S", time.localtime()),
-            'depth': randint(5, 250),
-            'magnitude': round(uniform(2.0, 5.5), 1),
-            'latitude': uniform(-180, 180),
-            'longitude': uniform(-90, 90),
-            'verified': False,
-            'sensorId': sensorsId[randint(0, len(sensorsId) - 1)]
-        }
-        seism = seism_schema.loads(value_sensor)
-        db.session.add(seism)
-        db.session.commit()
-        return seism_schema.jsonify(seism), 201
+        while True:
+            sensors = db.session.query(SensorModel).all()
+            sensorsId = []
+            for sensor in sensors:
+                sensorsId.append(sensor.id)
+            value_sensor = {
+                'datetime': datetime.datetime.now(),
+                'depth': randint(20, 600),
+                'magnitude': round(uniform(1, 9), 1),
+                'latitude': uniform(-57.409798, 10.075782),
+                'longitude': uniform(-87.475526, -55.477882),
+                'verified': False,
+                'sensorId': sensorsId[randint(0, len(sensorsId) - 1)]
+            }
+            seism_dumped = seisms_schema.dumps(value_sensor)
+            seism = seisms_schema.loads(seism_dumped)
+            db.session.add(seism)
+            db.session.commit()
+            return seism_schema.jsonify(seism), 201
 
 
 class VerifiedSeism(Resource):

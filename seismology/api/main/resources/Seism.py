@@ -10,7 +10,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from main.auth.decorators import admin_required
 from main.resources.Pagination import Pagination
 
-seism_schema = SeismSchema(many=True)
+seism_schema = SeismSchema()
+seisms_schema = SeismSchema(many=True)
 
 
 class UnverifiedSeism(Resource):
@@ -24,7 +25,7 @@ class UnverifiedSeism(Resource):
         else:
             return 'Denied Access', 403
 
-    @admin_required
+    # @admin_required
     # eliminar recurso
     def delete(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
@@ -35,7 +36,7 @@ class UnverifiedSeism(Resource):
         else:
             return 'Denied Access', 403
 
-    @admin_required
+    # @admin_required
     # modificar recurso
     def put(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
@@ -61,9 +62,9 @@ class UnverifiedSeisms(Resource):
         for key, value in filters:
             query = pag.apply(key, value)
         query, pagination = pag.pagination()
-        return seism_schema.jsonify(query.all())
+        return seisms_schema.jsonify(query.all())
 
-    @admin_required
+    # @admin_required
     def post(self):
         sensors = db.session.query(SensorModel).all()
         sensorsId = []
@@ -79,14 +80,14 @@ class UnverifiedSeisms(Resource):
             'verified': False,
             'sensorId': sensorsId[randint(0, len(sensorsId) - 1)]
         }
-        seism = SeismModel.from_json(value_sensor)
+        seism = seism_schema.loads(value_sensor)
         db.session.add(seism)
         db.session.commit()
         return seism_schema.jsonify(seism), 201
 
 
 class VerifiedSeism(Resource):
-    @jwt_required
+    # @jwt_required
     # obtener recurso
     def get(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
@@ -108,4 +109,4 @@ class VerifiedSeisms(Resource):
         for key, value in filters:
             query = pag.apply(key, value)
         query, pagination = pag.pagination()
-        return seism_schema.dump(query.all())
+        return seisms_schema.dump(query.all())

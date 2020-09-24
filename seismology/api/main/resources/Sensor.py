@@ -9,8 +9,8 @@ from main.resources.Pagination import Pagination
 from main.map import SensorSchema
 
 
-sensor_schema = SensorSchema(many=True)
-
+sensors_schema = SensorSchema(many=True)
+sensor_schema = SensorSchema()
 
 class Sensor(Resource):
     # @jwt_required
@@ -58,7 +58,7 @@ class Sensors(Resource):
         for key, value in filters:
             query = pag.apply(key, value)
         query, pagination = pag.pagination()
-        return sensor_schema.dump(query.all())
+        return sensors_schema.dump(query.all())
 
     # @admin_required
     # insertar recurso

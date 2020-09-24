@@ -7,18 +7,17 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 from main.map.User import UserSchema
 
 user_schema = UserSchema()
-user_schema = UserSchema(many=True)
+users_schema = UserSchema(many=True)
 
 
 class User(Resource):
 
-    @jwt_required
+    # @jwt_required
     def get(self, id):
         user = db.session.query(UserModel).get_or_404(id)
         return user_schema.jsonify(user)
 
-
-    @jwt_required
+    # @jwt_required
     def put(self, id):
         user = db.session.query(UserModel).get_or_404(id)
         for key, value in request.get_json().items():
@@ -27,7 +26,7 @@ class User(Resource):
         db.session.commit()
         return user_schema.jsonify(user), 201
 
-    @jwt_required
+    # @jwt_required
     def delete(self, id):
         user = db.session.query(UserModel).get_or_404(id)
         db.session.delete(user)
@@ -44,7 +43,7 @@ class Users(Resource):
     # @admin_required
     def get(self):
         users = db.session.query(UserModel).all()
-        return user_schema.dump(users)
+        return users_schema.dump(users)
 
     # @admin_required
     def post(self):
